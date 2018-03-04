@@ -1,7 +1,7 @@
 'use strict';
 
 var app = app || {};
-var __API_URL__ = 'http://localhost:3000'; 
+var __API_URL__ = 'http://localhost:3000';
 
 (function(module) {
   function errorCallback(err) {
@@ -16,10 +16,10 @@ var __API_URL__ = 'http://localhost:3000';
   Book.prototype.toHtml = function() {
     let template = Handlebars.compile($('#book-list-template').text());
     return template(this);
-  }
+  };
 
   Book.all = [];
-  
+
   Book.loadAll = rows => Book.all = rows.sort((a, b) => b.title - a.title).map(book => new Book(book));
   Book.fetchAll = callback =>
     $.get(`${__API_URL__}/api/v1/books`)
@@ -39,34 +39,36 @@ var __API_URL__ = 'http://localhost:3000';
       .catch(errorCallback);
 
   Book.update = (book, bookId) =>
-      $.ajax({
-        url: `${__API_URL__}/api/v1/books/${bookId}`,
-        method: 'PUT',
-        data: book,
-      })
+    $.ajax({
+      url: `${__API_URL__}/api/v1/books/${bookId}`,
+      method: 'PUT',
+      data: book,
+    })
       .then(() => page(`/books/${bookId}`))
-      .catch(errorCallback)
+      .catch(errorCallback);
 
   Book.destroy = id =>
     $.ajax({
       url: `${__API_URL__}/api/v1/books/${id}`,
       method: 'DELETE',
     })
-    .then(() => page('/'))
-    .catch(errorCallback)
+      .then(() => page('/'))
+      .catch(errorCallback);
 
   // COMMENT: Where is this method invoked? What is passed in as the 'book' argument when invoked? What callback will be invoked after Book.loadAll is invoked?
+  // ANSWER: This method is invoked in bookView.initSearchFormPage(). The book argument contains the values the user input for their search parameters. The callback that will be invoked is bookView.initSearchResultsPage().
   Book.find = (book, callback) =>
     $.get(`${__API_URL__}/api/v1/books/find`, book)
       .then(Book.loadAll)
       .then(callback)
-      .catch(errorCallback)
+      .catch(errorCallback);
 
   // COMMENT: Where is this method invoked? How does it differ from the Book.find method, above?
+  // ANSWER: This method is invoked in bookView.initSearchResultsPage(). This will find a specific book based on it's ISBN rather than searching for all books with a specific author or title.
   Book.findOne = isbn =>
     $.get(`${__API_URL__}/api/v1/books/find/${isbn}`)
-    .then(Book.create)
-    .catch(errorCallback)
+      .then(Book.create)
+      .catch(errorCallback);
 
   module.Book = Book;
-})(app)
+})(app);
