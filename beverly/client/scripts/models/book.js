@@ -64,7 +64,7 @@ var __API_URL__ = 'http://localhost:3000';
       .catch(errorCallback);
 
   // COMMENT: Where is this method invoked? How does it differ from the Book.find method, above?
-  // ANSWER: This method is invoked in bookView.initSearchResultsPage(). This will find a specific book based on it's ISBN rather than searching for all books with a specific author or title.
+  // ANSWER: This method is invoked in bookView.initSearchResultsPage(). This will find a specific book based on it's ISBN rather than searching for all books with a specific author or title. It then takes all the book for that book and adds it to your list of books.
   Book.findOne = isbn =>
     $.get(`${__API_URL__}/api/v1/books/find/${isbn}`)
       .then(Book.create)
